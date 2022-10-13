@@ -10,8 +10,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.11259646171366473 -0.03344037937373449 -0.9930779314016116 3.7151789810336346
-  position 1.172659116013487 -0.9040700975965443 0.6902114857863261
+  orientation -0.06724925181592391 -0.9890408412591717 0.13143725671037312 5.328421044577719
+  position -2.315151971439473 0.06669526757712264 3.4364915827466977
 }
 TexturedBackground {
 }
@@ -53,10 +53,12 @@ Wall {
   size 0.2 1.7 1
 }
 Youbot {
+  controller "lidar_python"
   bodySlot [
     HokuyoUrg04lx {
       translation 0.27 0 0.06
       name "lidar"
+      noise 0.01
     }
   ]
 }
