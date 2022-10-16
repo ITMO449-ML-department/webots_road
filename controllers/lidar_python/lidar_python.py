@@ -35,16 +35,28 @@ motor_fr.setPosition(float('inf'))
 #  motor = robot.getDevice('motorname')
 #  ds = robot.getDevice('dsname')
 #  ds.enable(timestep)
+def move_forward(u):
+    motor_bl.setVelocity(u)
+    motor_br.setVelocity(u)
+    motor_fl.setVelocity(u)
+    motor_fr.setVelocity(u)
 
+def turn_right(u):
+    motor_bl.setVelocity(u)
+    motor_br.setVelocity(u)
+    motor_fl.setVelocity(u)
+    motor_fr.setVelocity(u)
 # Main loop:
+i = 1
 # - perform simulation steps until Webots is stopping the controller
 while robot.step(timestep) != -1:
     a = np.array(lidar.getRangeImage())
     # print(a[a.shape[0]//2])
-    motor_bl.setVelocity(1)
-    motor_br.setVelocity(1)
-    motor_fl.setVelocity(1)
-    motor_fr.setVelocity(1)
+    # motor_bl.setVelocity(1)
+    # motor_br.setVelocity(1)
+    # motor_fl.setVelocity(1)
+    # motor_fr.setVelocity(1)
+    turn_right(5)
     # Read the sensors:
     # Enter here functions to read sensor data, like:
     #  val = ds.getValue()
