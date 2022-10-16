@@ -5,6 +5,11 @@
 from controller import Robot
 from controller import Motor
 from controller import LidarPoint
+
+import sys
+print("Python version")
+print (sys.path)
+
 import numpy as np
 
 # create the Robot instance.
@@ -13,12 +18,11 @@ print(robot.getNumberOfDevices())
 for i in range(robot.getNumberOfDevices()):
     a = robot.getDeviceByIndex(i)
     print(i, a, a.getName())
-lidar = robot.getDevice("lidar")
-base = robot.getDevice("base")
-motor_bl = robot.getDevice("wheel4")
-motor_br = robot.getDevice("wheel3")
-motor_fr = robot.getDevice("wheel1")
-motor_fl = robot.getDevice("wheel2")
+lidar = robot.getDevice("Lidar")
+gps = robot.getDevice("gps")
+motor_l = robot.getDevice("motor.left")
+motor_r = robot.getDevice("motor.right")
+
 # print(motor)
 print('hi')
 
@@ -26,26 +30,23 @@ print('hi')
 timestep = int(robot.getBasicTimeStep())
 
 lidar.enable(timestep)
-motor_bl.setPosition(float('inf'))
-motor_br.setPosition(float('inf'))
-motor_fl.setPosition(float('inf'))
-motor_fr.setPosition(float('inf'))
+motor_l.setPosition(float('inf'))
+motor_r.setPosition(float('inf'))
+
 # You should insert a getDevice-like function in order to get the
 # instance of a device of the robot. Something like:
 #  motor = robot.getDevice('motorname')
 #  ds = robot.getDevice('dsname')
 #  ds.enable(timestep)
 def move_forward(u):
-    motor_bl.setVelocity(u)
-    motor_br.setVelocity(u)
-    motor_fl.setVelocity(u)
-    motor_fr.setVelocity(u)
+    motor_l.setVelocity(u)
+    motor_r.setVelocity(u)
+
 
 def turn_right(u):
-    motor_bl.setVelocity(u)
-    motor_br.setVelocity(u)
-    motor_fl.setVelocity(u)
-    motor_fr.setVelocity(u)
+    motor_l.setVelocity(u)
+    motor_r.setVelocity(-u)
+
 # Main loop:
 i = 1
 # - perform simulation steps until Webots is stopping the controller
