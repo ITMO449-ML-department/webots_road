@@ -4,14 +4,14 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/apartment_structure/protos/Wall.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/robots/mobsya/thymio/protos/Thymio2.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/devices/hokuyo/protos/HokuyoUrg04lx.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.18156781975768635 0.17271117044277928 0.9680929596029121 1.6531544369055415
-  position -0.22768675770623215 -1.9674968196458555 0.5825806301721751
+  orientation -0.10963092785548335 0.09918385345671964 0.9890114371790762 1.6817873635961036
+  position 0.046745393878640386 -1.1154553357968182 0.24829875867094148
 }
 TexturedBackground {
 }
@@ -52,14 +52,17 @@ Wall {
   name "wall(4)"
   size 0.2 1.7 1
 }
-Thymio2 {
+E-puck {
   controller "lidar_python"
-  bodySlot [
+  controllerArgs [
+    ""
+  ]
+  turretSlot [
     GPS {
-      translation 0.03 0 0.05
+      translation 0.01 0 0
     }
     HokuyoUrg04lx {
-      translation 0.03 0 0.1
+      translation 0.01 0 0.05
       name "Lidar"
     }
   ]

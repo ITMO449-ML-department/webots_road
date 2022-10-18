@@ -1,71 +1,64 @@
-"""lidar_python controller."""
+#!/usr/bin/env python3
 
-# You may need to import some classes of the controller module. Ex:
-#  from controller import Robot, Motor, DistanceSensor
+"""lidar_python controller."""
 from controller import Robot
 from controller import Motor
 from controller import LidarPoint
-
-import sys
-print("Python version")
-print (sys.path)
-
 import numpy as np
 
-# create the Robot instance.
+
 robot = Robot()
-print(robot.getNumberOfDevices())
-for i in range(robot.getNumberOfDevices()):
-    a = robot.getDeviceByIndex(i)
-    print(i, a, a.getName())
+
+
 lidar = robot.getDevice("Lidar")
 gps = robot.getDevice("gps")
-motor_l = robot.getDevice("motor.left")
-motor_r = robot.getDevice("motor.right")
+motor_l = robot.getDevice("left wheel motor")
+motor_r = robot.getDevice("right wheel motor")
+sensor_l = robot.getDevice("left wheel sensor")
+sensor_r = robot.getDevice("right wheel sensor")
 
-# print(motor)
-print('hi')
 
-# get the time step of the current world.
-timestep = int(robot.getBasicTimeStep())
+timestep = 1 #int(robot.getBasicTimeStep())
+
 
 lidar.enable(timestep)
+gps.enable(timestep)
+sensor_l.enable(timestep)
+sensor_r.enable(timestep)
 motor_l.setPosition(float('inf'))
 motor_r.setPosition(float('inf'))
 
-# You should insert a getDevice-like function in order to get the
-# instance of a device of the robot. Something like:
-#  motor = robot.getDevice('motorname')
-#  ds = robot.getDevice('dsname')
-#  ds.enable(timestep)
-def move_forward(u):
-    motor_l.setVelocity(u)
-    motor_r.setVelocity(u)
+
+wheel_R = 0.0201
+dist_between = 0.052
+odometry_state = np.array([0, 0, 0],dtype=float)
+pos_prev = [0, 0]
+
+def odometry_diff():
+    global pos_prev
+    pos_l = sensor_l.getValue()
+    pos_r = sensor_r.getValue()
+    
+    diff_l = (pos_l - pos_prev[0])*wheel_R
+    diff_r = (pos_r - pos_prev[1])*wheel_R
+    
+    dtheta = (diff_r - diff_l)/dist_between
+    dx = (diff_l + diff_r)/2.0 * np.cos(odometry_state[2]+dtheta)
+    dy = (diff_l + diff_r)/2.0 * np.sin(odometry_state[2]+dtheta)
+    pos_prev = [pos_l, pos_r]
+    print(dx,dy,dtheta)
+    return np.array([dx,dy,dtheta])
 
 
-def turn_right(u):
-    motor_l.setVelocity(u)
-    motor_r.setVelocity(-u)
-
-# Main loop:
-i = 1
-# - perform simulation steps until Webots is stopping the controller
 while robot.step(timestep) != -1:
-    a = np.array(lidar.getRangeImage())
-    # print(a[a.shape[0]//2])
-    # motor_bl.setVelocity(1)
-    # motor_br.setVelocity(1)
-    # motor_fl.setVelocity(1)
-    # motor_fr.setVelocity(1)
-    turn_right(5)
-    # Read the sensors:
-    # Enter here functions to read sensor data, like:
-    #  val = ds.getValue()
+    gps_data = np.array(gps.getValues())
+    # print(odometry_state[-1]/np.pi*180)
+    # print(np.sqrt(np.sum((gps_data[:-1]-odometry_state[:-1])**2)))
+    # print(gps_data[:-1],odometry_state)
+    motor_l.setVelocity(-5)
+    motor_r.setVelocity(-4)
+    
+    odometry_state += odometry_diff()
 
-    # Process sensor data here.
-
-    # Enter here functions to send actuator commands, like:
-    #  motor.setPosition(10.0)
-    pass
-
-# Enter here exit cleanup code.
+    lidar_data = np.array(lidar.getRangeImage())
+    
