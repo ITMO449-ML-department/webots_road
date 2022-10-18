@@ -5,6 +5,6 @@ sceneTreePerspectives: 000000ff00000001000000030000001c000000c0000000fa010000000
 maximizedDockId: -1
 centralWidgetVisible: 1
 orthographicViewHeight: 1
-textFiles: 0 "controllers/lidar_python/lidar_python.py" ""
+textFiles: 0 "controllers/lidar_python/lidar_python.py"
 consoles: Console:All:All
 renderingDevicePerspectives: e-puck:camera;0;3.82051;0.0233645;0.0212766

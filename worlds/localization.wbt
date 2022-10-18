@@ -3,56 +3,84 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/RectangleArena.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/apartment_structure/protos/Wall.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/devices/hokuyo/protos/HokuyoUrg04lx.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/apartment_structure/protos/Wall.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/solids/protos/SolidBox.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.10963092785548335 0.09918385345671964 0.9890114371790762 1.6817873635961036
-  position 0.046745393878640386 -1.1154553357968182 0.24829875867094148
+  orientation -0.40111474820408066 0.10980987204407086 0.9094222071045118 2.653591072365505
+  position 5.7519615038082215 -5.481992769707954 7.7356946090628735
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 RectangleArena {
-  floorSize 5 10
-  wallHeight 1
+  floorSize 5 5
+  wallHeight 0.25
 }
 Wall {
-  translation 2.00979 -0.943277 0
-  rotation 0 0 1 -1.5707953071795862
-  size 0.2 1 1
+  translation 0 -2 0
+  size 0.01 1 0.25
+}
+SolidBox {
+  translation 1.5 1.5 0.25
+  size 0.5 0.5 0.5
 }
 Wall {
-  translation 0.737023 1.69374 0
+  translation 0 -1 0
   name "wall(1)"
-  size 0.2 1 1
+  size 0.01 0.5 0.25
 }
 Wall {
-  translation 0.737023 0.703741 0
+  translation -0.5 -0.75 0
+  rotation 0 0 1 1.57
   name "wall(2)"
-  size 0.2 1 1
+  size 0.01 1 0.25
 }
 Wall {
-  translation 0.737023 -3.50626 0
+  translation 0.5 -0.75 0
+  rotation 0 0 1 1.57
+  name "wall(11)"
+  size 0.01 1 0.25
+}
+Wall {
+  translation -1.5 -0.75 0
+  rotation 0 0 1 1.57
+  name "wall(12)"
+  size 0.01 1 0.25
+}
+Wall {
+  translation -2 0.5 0
   name "wall(3)"
-  size 0.2 3 1
+  size 0.01 2.5 0.25
 }
 Wall {
-  translation 0.737023 3.99374 0
-  name "wall(5)"
-  size 0.2 2 1
-}
-Wall {
-  translation 1.64216 1.30431 0
-  rotation 0 0 1 1.5708
+  translation 0 -2 0
   name "wall(4)"
-  size 0.2 1.7 1
+  size 0.01 1 0.25
+}
+Wall {
+  translation 0 1.5 0
+  name "wall(5)"
+  size 0.01 2 0.25
+}
+Wall {
+  translation 1 -1 0
+  name "wall(6)"
+  size 0.01 0.5 0.25
+}
+Wall {
+  translation 0 0.5 0
+  rotation 0 0 1 1.57
+  name "wall(7)"
+  size 0.01 3 0.25
 }
 E-puck {
+  translation -1.5 -1.5 0
   controller "lidar_python"
   controllerArgs [
     ""
