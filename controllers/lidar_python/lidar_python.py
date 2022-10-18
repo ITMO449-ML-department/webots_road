@@ -9,6 +9,24 @@ import numpy as np
 
 robot = Robot()
 
+map_ = np.zeros((5000,5000))
+
+def add_obstacle(x, y, a, b):
+    global map_
+    x, y, a, b = map(int, [2500 + x*1000, 2500 - y*1000, a*500, b*500])
+    # print(x, y, a, b)
+    map_[y-b:y+b,x-a:x+a] = 1
+    
+add_obstacle(0,-1,0.01,0.5)
+add_obstacle(-0.5,-0.75,1,0.01)
+add_obstacle(0.5,-0.75,1,0.01)
+add_obstacle(-1.5,-0.75,1,0.01)
+add_obstacle(-2,0.5,0.01,2.5)
+add_obstacle(0,-2,0.01,1)
+add_obstacle(0,1.5,0.01,2)
+add_obstacle(1,-1,0.01,0.5)
+add_obstacle(0,0.5,3,0.01)
+add_obstacle(1.5,1.5,0.5,0.5)
 
 lidar = robot.getDevice("Lidar")
 gps = robot.getDevice("gps")
@@ -52,16 +70,19 @@ def odometry_diff():
 gps_data = np.zeros(2)
 gps_data_prev = np.zeros(2)
 angle = 0
+angle_prev = 0
 
 while robot.step(timestep) != -1:
     gps_data = np.array(gps.getValues())[:-1]
     
     diff = gps_data - gps_data_prev
     angle = np.arctan2(np.array(diff[1]),np.array(diff[0]))
-    # angle += dangle
+    
+    dangle = angle - angle_prev
+    rho = np.sqrt(np.sum(diff**2))
     
     motor_l.setVelocity(5)
-    motor_r.setVelocity(4)
+    motor_r.setVelocity(5)
     
     print(angle*180/np.pi)
     
@@ -73,4 +94,5 @@ while robot.step(timestep) != -1:
 
     lidar_data = np.array(lidar.getRangeImage())
     gps_data_prev[:] = gps_data[:]
+    agle_prev = angle
     
