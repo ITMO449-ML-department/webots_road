@@ -11,8 +11,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.5713344886259348 0.5946574202021676 0.5656495864977223 2.077399042662913
-  position 0.20842421145761103 -0.28007688308311496 7.978327273526765
+  orientation 0.04889179766911204 0.9848090117082438 -0.1666157332874502 0.5791231557134648
+  position -3.0446867698563853 -1.4625016456041364 0.9383831571246878
 }
 TexturedBackground {
 }
@@ -91,7 +91,9 @@ E-puck {
     }
     HokuyoUrg04lx {
       translation 0.01 0 0.05
+      rotation 0 0 1 7.33682e-06
       name "Lidar"
+      resolution 800
     }
   ]
 }
