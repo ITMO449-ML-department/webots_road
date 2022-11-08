@@ -98,12 +98,17 @@ def odometry_diff(): # calculates state difference with odometry
     return np.array([dx,dy,dtheta])
 
 # Create sample 
-
-# 
+particle_num = 2000
+sample = np.zeros((particle_num,3))
+sample[:,0] = np.random.uniform(-2.5,2.5,(particle_num))[:]
+sample[:,1] = np.random.uniform(-2.5,2.5,(particle_num))[:]
+sample[:,2] = np.random.uniform(-np.pi,np.pi,(particle_num))[:]
 
 while robot.step(timestep) != -1:
     motor_l.setVelocity(5)
     motor_r.setVelocity(5)
-    
+    # Calculate odometry difference
+    dvec = odometry_diff()
+    # 
     print(procceed_lidar())
 
