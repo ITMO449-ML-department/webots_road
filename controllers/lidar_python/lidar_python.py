@@ -5,6 +5,9 @@ from controller import Robot
 from controller import Motor
 from controller import LidarPoint
 import numpy as np
+import scipy
+from matplotlib import pyplot as plt
+import time
 
 
 robot = Robot()
@@ -66,13 +69,13 @@ def is_obst(x, y): # checks if there an obstacle
 # takes robot state vector and lidar range (4m)
 # returns lidar model data
 def modelate_lidar(x, y, angle, ran): 
-    ang = np.linspace(angle + 120/180*np.pi,angle - 120/180*np.pi,N) # vision field
+    ang = np.linspace(angle + 120/180*np.pi,angle-120/180*np.pi,lidar_points_num) # vision field
     output = np.zeros_like(ang)
     ang[ang<-np.pi] += 2*np.pi
     ang[ang>-np.pi] -= 2*np.pi
     for i, a in enumerate(ang):
         x2, y2 = x + ran*np.cos(a), y + ran*np.sin(a)
-        steps= 10**4
+        steps= 10**3
         for step in range(steps):
             x_s = x + step*(x2-x)/steps
             y_s = y + step*(y2-y)/steps
@@ -98,17 +101,65 @@ def odometry_diff(): # calculates state difference with odometry
     return np.array([dx,dy,dtheta])
 
 # Create sample 
-particle_num = 2000
+particle_num = 100
 sample = np.zeros((particle_num,3))
 sample[:,0] = np.random.uniform(-2.5,2.5,(particle_num))[:]
 sample[:,1] = np.random.uniform(-2.5,2.5,(particle_num))[:]
 sample[:,2] = np.random.uniform(-np.pi,np.pi,(particle_num))[:]
 
+def resample_from_index(particles, weights, indexes):
+    particles[:] = particles[indexes]
+    weights.resize(len(particles))
+    weights.fill (1.0 / len(weights))
+
+def simple_resample(particles, weights):
+    N = len(particles)
+    cumulative_sum = np.cumsum(weights)
+    cumulative_sum[-1] = 1. # avoid round-off error
+    indexes = np.searchsorted(cumulative_sum, np.random.random(N))
+
+    # resample according to indexes
+    particles[:] = particles[indexes]
+    weights.fill(1.0 / N)
+
+def estimate(particles, weights):
+    """returns mean and variance of the weighted particles"""
+
+    pos = particles[:, 0:3]
+    mean = np.average(pos, weights=weights, axis=0)
+    var  = np.average((pos - mean)**2, weights=weights, axis=0)
+    return mean, var
+
+est_pos = []
+t = time.time()
+j = 0
 while robot.step(timestep) != -1:
     motor_l.setVelocity(5)
     motor_r.setVelocity(5)
     # Calculate odometry difference
     dvec = odometry_diff()
-    # 
-    print(procceed_lidar())
-
+    # Change states
+    sample += dvec
+    sample[2][sample[2]<-np.pi] += 2*np.pi
+    sample[2][sample[2]>-np.pi] -= 2*np.pi
+    # Lidar
+    sample_lidar = np.zeros((particle_num,lidar_points_num))
+    for i in range(particle_num):
+        sample_lidar[i,:] =  modelate_lidar(*sample[i],4)
+    real_lidar = procceed_lidar()
+    # Calculate probs
+    probs =  scipy.stats.norm(np.zeros((1,lidar_points_num)), 0.05/2).pdf(sample_lidar-real_lidar.reshape((1,-1)))
+    probs = np.sum(probs,axis=1)
+    probs = probs / np.sum(probs)
+    # Resample
+    simple_resample(sample,probs)
+    mu, var = estimate(sample, probs)
+    est_pos.append(mu)
+    if time.time() - t > 0.5:
+        add_obstacle(mu[0],mu[1],0.1,0.1)
+        plt.imshow(map_)
+        plt.plot(np.array(est_pos)[:,0],np.array(est_pos)[:,1])
+        plt.savefig(f"./plots/plt({j}).png")
+        j+=1
+        t = time.time()
+    print(mu, var)
