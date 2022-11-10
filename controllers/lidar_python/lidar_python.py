@@ -125,14 +125,18 @@ def resample_from_index(particles, weights, indexes):
 
 
 def simple_resample(particles, weights):
+    global particle_num
     N = len(particles)
-    cumulative_sum = np.cumsum(weights)
-    cumulative_sum[-1] = 1.  # avoid round-off error
-    indexes = np.searchsorted(cumulative_sum, np.random.random(N))
+    arr_num = particle_num * weights/weights.sum() 
+    # print(arr_num.sum())
+    new_points = np.random.normal(particles[0],0.5,(int(arr_num[0]),3))
+    for i in range(1,particle_num):
+        new_points = np.concatenate([new_points,np.random.normal(particles[i],0.5,(int(arr_num[i]),3))])
+    print(new_points.shape)
 
-    # resample according to indexes
-    particles[:] = particles[indexes]
+    particle_num = new_points.shape[0]
     weights.fill(1.0 / N)
+    return new_points
 
 
 def estimate(particles, weights):
@@ -169,8 +173,8 @@ while robot.step(timestep) != -1:
         probs = np.sum(probs, axis=1)
         probs = probs / np.sum(probs)
         # Resample
-        simple_resample(sample, probs)
         mu, var = estimate(sample, probs)
+        sample =  simple_resample(sample, probs)
         est_pos.append(mu)
         # add_obstacle(mu[0], mu[1], 0.1, 0.1)
         # plt.imshow(map_)
