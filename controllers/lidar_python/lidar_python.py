@@ -125,23 +125,25 @@ def resample_from_index(particles, weights, indexes):
 
 
 def simple_resample(particles, weights):
+    
     global particle_num
     N = len(particles)
     arr_num = particle_num * weights/weights.sum() 
     # print(arr_num.sum())
     new_points = np.random.normal(particles[0],0.5,(int(arr_num[0]),3))
     for i in range(1,particle_num):
-        new_points = np.concatenate([new_points,np.random.normal(particles[i],0.5,(int(arr_num[i]),3))])
-    print(new_points.shape)
+        new_points = np.concatenate([new_points,np.random.normal(particles[i],0.5,(round(arr_num[i]),3))])
+    if new_points.shape[0] < particle_num:
+        new_points = np.concatenate([new_points,np.random.normal(0,4,(particle_num - new_points.shape[0],3))])
+    print(f"Пришло {particles.shape} Ушло{new_points.shape}")
 
-    particle_num = new_points.shape[0]
-    weights.fill(1.0 / N)
+    # particle_num = new_points.shape[0]
+    # weights.fill(1.0 / N)
     return new_points
 
 
 def estimate(particles, weights):
     """returns mean and variance of the weighted particles"""
-
     pos = particles[:, 0:3]
     mean = np.average(pos, weights=weights, axis=0)
     var = np.average((pos - mean)**2, weights=weights, axis=0)
@@ -149,7 +151,7 @@ def estimate(particles, weights):
 
 
 est_pos = []
-t = time.time()
+# t = time.time()
 cicle_counter = 0
 while robot.step(timestep) != -1:
     cicle_counter += 1
@@ -161,12 +163,19 @@ while robot.step(timestep) != -1:
     sample += dvec
     sample[:,2][sample[:,2] < -np.pi] += 2*np.pi
     sample[:,2][sample[:,2] > np.pi] -= 2*np.pi
-    # Lidar
-    sample_lidar = np.zeros((particle_num, lidar_points_num))
-    for i in range(particle_num):
-        sample_lidar[i, :] = modelate_lidar(*sample[i], 4)
-    real_lidar = procceed_lidar()
+    # # Lidar
+    # sample_lidar = np.zeros((particle_num, lidar_points_num))
+    # for i in range(particle_num):
+    #     sample_lidar[i, :] = modelate_lidar(*sample[i], 4)
+    # real_lidar = procceed_lidar()
     if cicle_counter % 5 == 0:
+        # ========
+        # Lidar
+        sample_lidar = np.zeros((particle_num, lidar_points_num))
+        for i in range(particle_num):
+            sample_lidar[i, :] = modelate_lidar(*sample[i], 4)
+        real_lidar = procceed_lidar()
+        # ==========
         # Calculate probs
         probs = scipy.stats.norm(np.zeros(
             (1, lidar_points_num)), 0.35).pdf(sample_lidar-real_lidar.reshape((1, -1)))
@@ -181,14 +190,14 @@ while robot.step(timestep) != -1:
         # plt.plot(np.array(est_pos)[:, 0], np.array(est_pos)[:, 1])
         # plt.savefig(f"../plots/plt({cicle_counter}).png")
         plt.clf()
+        x, y, z = gps.getValues()
+        plt.scatter(x,y, c='r')
         plt.title(sample.shape)
         plt.xlim([-2.5,2.5])
         plt.ylim([-2.5,2.5])
         plt.scatter(sample[:, 0], sample[:, 1],  s=0.5, label="probs")
         plt.legend()
-        x, y, z = gps.getValues()
-        plt.scatter(x,y, c='r')
         plt.savefig(f"../plots/probs({cicle_counter}).png")
-        t = time.time()
-        print("Saved!")
+        # t = time.time()
+        # print("Saved!")
     # print(mu, var)
