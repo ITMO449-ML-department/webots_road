@@ -1,5 +1,7 @@
 controllers/plots
 test.py
+.DS_Store
+.python-version
 
 
 
