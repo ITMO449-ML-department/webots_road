@@ -111,7 +111,7 @@ def odometry_diff():  # calculates state difference with odometry
 
 
 # Create sample
-particle_num = 1000
+particle_num = 5000
 sample = np.zeros((particle_num, 3))
 sample[:, 0] = np.random.uniform(-2.5, 2.5, (particle_num))[:]
 sample[:, 1] = np.random.uniform(-2.5, 2.5, (particle_num))[:]
@@ -127,18 +127,24 @@ def resample_from_index(particles, weights, indexes):
 def simple_resample(particles, weights):
     
     global particle_num
-    N = len(particles)
+    # N = len(particles)
     arr_num = particle_num * weights/weights.sum() 
     # print(arr_num.sum())
-    new_points = np.random.normal(particles[0],0.5,(int(arr_num[0]),3))
+    new_points = np.random.normal(particles[0],0.05,(int(arr_num[0]),3))
     for i in range(1,particle_num):
-        new_points = np.concatenate([new_points,np.random.normal(particles[i],0.5,(round(arr_num[i]),3))])
+        new_points = np.concatenate([new_points,np.random.normal(particles[i],0.05/2,(round(arr_num[i]),3))])
+    t = new_points.shape[0]
     if new_points.shape[0] < particle_num:
         new_points = np.concatenate([new_points,np.random.normal(0,4,(particle_num - new_points.shape[0],3))])
-    print(f"Пришло {particles.shape} Ушло{new_points.shape}")
-
+    if new_points.shape[0] > particle_num:
+        size_to_del = abs(particle_num - new_points.shape[0])
+        ind_to_del = np.random.randint(low=0, high=new_points.shape[0]-1, size=size_to_del * 3)
+        # print(- particle_num + new_points.shape[0], ind_to_del)
+        ind_to_del = np.unique(ind_to_del)[0:size_to_del]
+        new_points = np.delete(new_points, ind_to_del, 0)
     # particle_num = new_points.shape[0]
     # weights.fill(1.0 / N)
+    print(f"Пришло {particles.shape} Стало {t} Ушло{new_points.shape}")
     return new_points
 
 
@@ -191,11 +197,12 @@ while robot.step(timestep) != -1:
         # plt.savefig(f"../plots/plt({cicle_counter}).png")
         plt.clf()
         x, y, z = gps.getValues()
-        plt.scatter(x,y, c='r')
+        
         plt.title(sample.shape)
         plt.xlim([-2.5,2.5])
         plt.ylim([-2.5,2.5])
         plt.scatter(sample[:, 0], sample[:, 1],  s=0.5, label="probs")
+        plt.scatter(x,y, c='r')
         plt.legend()
         plt.savefig(f"../plots/probs({cicle_counter}).png")
         # t = time.time()
