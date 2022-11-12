@@ -153,12 +153,17 @@ def simple_resample(particles, weights):
     new_points = np.random.normal(particles[0],0.05,(int(arr_num[0]),3))
     for i in range(1,particle_num):
         if round(arr_num[i]) > 1:
-            new_points = np.concatenate([new_points,np.random.normal(particles[i],0.05/2,(round(arr_num[i])-1,3))])
+            new_points = np.concatenate([new_points, np.random.normal(particles[i],0.05,(round(arr_num[i]), 3))])
             new_points = np.concatenate([new_points,[particles[i]]])
         elif round(arr_num[i]) == 1:
             new_points = np.concatenate([new_points,[particles[i]]])
         
     if new_points.shape[0] < particle_num:
+        rand_sample = np.zeros((particle_num-new_points.shape[0], 3))
+        rand_sample[:, 0] = np.random.uniform(-2.5, 2.5, (particle_num-new_points.shape[0]))[:]
+        rand_sample[:, 1] = np.random.uniform(-2.5, 2.5, (particle_num-new_points.shape[0]))[:]
+        rand_sample[:, 2] = np.random.uniform(-np.pi, np.pi, (particle_num-new_points.shape[0]))[:]
+            
         new_points = np.concatenate([new_points,np.random.normal(0,4,(particle_num - new_points.shape[0],3))])
     if new_points.shape[0] > particle_num:
         size_to_del = abs(particle_num - new_points.shape[0])
