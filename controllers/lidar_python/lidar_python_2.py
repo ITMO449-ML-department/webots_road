@@ -80,7 +80,7 @@ def modelate_lidar(x, y, angle, ran):
                       np.pi, lidar_points_num)  # vision field
     output = np.zeros_like(ang)
     ang[ang < -np.pi] += 2*np.pi
-    ang[ang > -np.pi] -= 2*np.pi
+    ang[ang > np.pi] -= 2*np.pi
     for i, a in enumerate(ang):
         x2, y2 = x + ran*np.cos(a), y + ran*np.sin(a)
         steps = 10**3
