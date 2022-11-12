@@ -8,6 +8,7 @@ import numpy as np
 import scipy
 from matplotlib import pyplot as plt
 import time
+import center_of_mass
 
 
 robot = Robot()
@@ -224,9 +225,13 @@ while robot.step(timestep) != -1:
             plt.xlim([-2.5,2.5])
             plt.ylim([-2.5,2.5])
             plt.scatter(sample[:, 0], sample[:, 1],  s=0.5, label="probs")
+            plt.scatter(x,y, c='g', label="gps")
+            xy = np.vstack([sample[:, 0], sample[:, 1]])
+            dens = scipy.stats.gaussian_kde(xy)(xy)
+            max_x, max_y = xy[:,np.argmax(dens)]
+            plt.scatter(max_x,max_y, c='r', label="prediction")
             plt.legend()
-            plt.scatter(x,y, c='r')
             plt.savefig(f"../plots/probs({round(t,2)}).png")
             
-        print([x, y], mu[:2])
+        # print([x, y], mu[:2])
     # print(mu, var)

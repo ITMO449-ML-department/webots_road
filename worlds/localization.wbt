@@ -11,8 +11,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.04889179766911204 0.9848090117082438 -0.1666157332874502 0.5791231557134648
-  position -3.0446867698563853 -1.4625016456041364 0.9383831571246878
+  orientation 0.07874685126884137 0.9871554029162214 -0.1390077116873582 1.041923936866423
+  position -2.505034683405512 -1.465637260279943 1.456867384050538
 }
 TexturedBackground {
 }
@@ -81,7 +81,7 @@ Wall {
 }
 E-puck {
   translation -1.5 -1.5 0
-  controller "lidar_python"
+  controller "lidar_python_v2"
   controllerArgs [
     ""
   ]
