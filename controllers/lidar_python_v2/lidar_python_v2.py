@@ -9,6 +9,7 @@ import scipy
 from matplotlib import pyplot as plt
 import time
 import center_of_mass
+from sklearn.neighbors import KernelDensity
 
 
 robot = Robot()
@@ -225,13 +226,13 @@ while robot.step(timestep) != -1:
             plt.xlim([-2.5,2.5])
             plt.ylim([-2.5,2.5])
             plt.scatter(sample[:, 0], sample[:, 1],  s=0.5, label="probs")
-            plt.scatter(x,y, c='g', label="gps")
-            xy = np.vstack([sample[:, 0], sample[:, 1]])
-            dens = scipy.stats.gaussian_kde(xy)(xy)
-            max_x, max_y = xy[:,np.argmax(dens)]
+            plt.scatter(x,y, c='y', label="gps")
+            kde = KernelDensity(kernel='gaussian', bandwidth=0.2).fit(sample[:,:2])
+            idx = np.argmax(kde.score_samples(sample[:,:2]))
+            max_x, max_y = sample[idx,0], sample[idx,1]
             plt.scatter(max_x,max_y, c='r', label="prediction")
             plt.legend()
             plt.savefig(f"../plots/probs({round(t,2)}).png")
             
-        # print([x, y], mu[:2])
+            print(max_x, max_y)
     # print(mu, var)
